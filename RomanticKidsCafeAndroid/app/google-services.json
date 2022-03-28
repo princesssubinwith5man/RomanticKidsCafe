@@ -1,0 +1,77 @@
+{
+  "project_info": {
+    "project_number": "804657004041",
+    "firebase_url": "https://princesssuvinand6dwarf-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "princesssuvinand6dwarf",
+    "storage_bucket": "princesssuvinand6dwarf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804657004041:android:1ab0b2993967ef660d82d8",
+        "android_client_info": {
+          "package_name": "com.example.practice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804657004041-krhdd50ntn4vqnavctbpjojneb3d4edk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL0HSLG5hUdu49H742LauKt6ywfLc-mcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804657004041-krhdd50ntn4vqnavctbpjojneb3d4edk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:804657004041:android:7dffbee0432db4f60d82d8",
+        "android_client_info": {
+          "package_name": "com.example.romantickidscafeandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "804657004041-frtk89eairt18o6gb3nrgsp4vflt3ip1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.romantickidscafeandroid",
+            "certificate_hash": "92e15c5ce06cb67f3455ea082abfe96f3484f254"
+          }
+        },
+        {
+          "client_id": "804657004041-krhdd50ntn4vqnavctbpjojneb3d4edk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAL0HSLG5hUdu49H742LauKt6ywfLc-mcM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "804657004041-krhdd50ntn4vqnavctbpjojneb3d4edk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

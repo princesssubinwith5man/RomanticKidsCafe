@@ -6,8 +6,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -90,5 +92,10 @@ public class HomeActivity extends AppCompatActivity {
         ListView listView =(ListView)findViewById(R.id.list);
         SimpleAdapter adapter = new SimpleAdapter(this, list, android.R.layout.simple_list_item_2,new String[]{"item1","item2"}, new int[] {android.R.id.text1, android.R.id.text2});
         listView.setAdapter(adapter);
+        //MySoundPlayer.initSounds(getApplicationContext());
+        //MySoundPlayer.play(MySoundPlayer.SUCCESS);
+        MediaPlayer mediaPlayer = MediaPlayer.create(this,R.raw.success);
+        //MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.success);
+        mediaPlayer.start();
     }
 }

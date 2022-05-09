@@ -7,17 +7,17 @@
 ---
 # 진행상황
 ### Andriod
-- Login ✔️
-- Sign-Up ✔️
-- Connect Firebase ✔️
-- Implement ListView ✔️
-- Sound ✔️
-- Alarm ❌
-- Design ❌
-- Connect WebCam ❌
-- ...
+- **Login**               ✔️
+- **Sign-Up**             ✔️
+- **Connect Firebase**    ✔️
+- **Implement ListView**  ✔️
+- **Sound**               ✔️
+- **Alarm**               ❌
+- **Design**              ❌
+- **Connect WebCam**      ❌
+- **...**
 ### Machine Learning
-- Yolo ✔️
-- MediaPipe ✔️
-- Connect Firebase ✔️
-- ... ❌
+- **Yolo**                ✔️
+- **MediaPipe**           ✔️
+- **Connect Firebase**    ✔️
+- **...**                 ❌

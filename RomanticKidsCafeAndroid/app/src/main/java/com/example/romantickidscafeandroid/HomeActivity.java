@@ -9,6 +9,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -89,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
                     assert s != null;
                     Log.d(TAG, "onDataChange: "+s.name + " " + s.girlfriend);
                     if(s.girlfriend){
+                        createNotification();
                         HashMap<String, String> item = new HashMap<String, String>();
                         item.put("item1", "[속보] "+s.name+" 여자친구 생김");
                         item.put("item2", s.date);
@@ -112,8 +114,30 @@ public class HomeActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         //MySoundPlayer.initSounds(getApplicationContext());
         //MySoundPlayer.play(MySoundPlayer.SUCCESS);
-        MediaPlayer mediaPlayer = MediaPlayer.create(this,R.raw.success);
-        //MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.success);
-        mediaPlayer.start();
+    }
+
+    public void ViewCam(View view) {
+        createNotification();
+        Intent intent = new Intent(HomeActivity.this, CamActivity.class);
+        startActivity(intent);
+    }
+
+    private void createNotification(){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
+
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("속보");
+        builder.setContentText("홍이삭 여친 생김");
+
+        builder.setColor(Color.RED);
+        // 사용자가 탭을 클릭하면 자동 제거
+        builder.setAutoCancel(true);
+
+        // 알림 표시
+        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannel(new NotificationChannel("default", "기본 채널", NotificationManager.IMPORTANCE_DEFAULT));
+        }
+        notificationManager.notify(1, builder.build());
     }
 }

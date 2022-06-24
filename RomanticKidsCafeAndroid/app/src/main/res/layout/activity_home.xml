@@ -13,11 +13,20 @@
         android:indeterminate="true"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
-    <ListView android:id="@+id/list"
+
+    <ListView
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fastScrollEnabled="true"
-        android:dividerHeight="0px"
         android:layout_marginTop="30dp"
-        android:divider="#FFFFFF" />
+        android:divider="#FFFFFF"
+        android:dividerHeight="0px"
+        android:fastScrollEnabled="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:onClick="ViewCam"
+        android:text="View cam" />
 </RelativeLayout>

@@ -72,11 +72,11 @@ public class FirebaseMessageReceiver
      */
     private void sendNotification(String messageBody) {
 
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, CamActivity.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -98,9 +98,9 @@ public class FirebaseMessageReceiver
             notificationManager.createNotificationChannel(channel);
         }
         notificationManager.notify(0, notificationBuilder.build());
-        MediaPlayer mediaPlayer = MediaPlayer.create(this,R.raw.success);
+        //MediaPlayer mediaPlayer = MediaPlayer.create(this,R.raw.success);
         //MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.success);
-        mediaPlayer.start();
+       //mediaPlayer.start();
 
     }
 }

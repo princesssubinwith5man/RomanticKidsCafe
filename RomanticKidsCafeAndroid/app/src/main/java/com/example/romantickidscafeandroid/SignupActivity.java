@@ -74,6 +74,8 @@ public class SignupActivity extends AppCompatActivity {
                             Name name = new Name(editTextName.getText().toString());
                             DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("name");
                             mDatabase.child(e).setValue(name);
+                            DatabaseReference nDatabase = FirebaseDatabase.getInstance().getReference("alarm");
+                            nDatabase.child(e).setValue("-1");
                             finish();
                         } else {
                             // 계정이 중복된 경우

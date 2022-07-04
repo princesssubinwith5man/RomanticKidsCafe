@@ -8,11 +8,13 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +35,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -69,28 +73,43 @@ public class HomeActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-        FirebaseMessaging.getInstance().subscribeToTopic("falldown").addOnCompleteListener(new OnCompleteListener<Void>() {
+
+        db = FirebaseFirestore.getInstance();
+        FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                String msg = "성공";
-                if(!task.isSuccessful()){
-                    msg = "실패";
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String e = user.getUid();
+                    String key = snapshot.child(e).getKey();
+                    if(key.equals(e)) {
+                        String alarm = snapshot.getValue(String.class);
+                        Log.d(TAG, "onDataChddddange: " + alarm);
+                        if(alarm.equals("-1")){
+                            AlarmDialogue();
+                        }
+                    }
                 }
-                Log.d(TAG, msg);
-                Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
-        db = FirebaseFirestore.getInstance();
         FirebaseDatabase.getInstance().getReference("fall_down").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    //if(alarm == "-1"){
+
+                    //}
                     FallDown s = snapshot.getValue(FallDown.class);
                     //String ss = snapshot.child("fall_down").getValue();
                     assert s != null;
                     Log.d(TAG, "onDataChange: "+s.name + " " + s.girlfriend);
                     if(s.girlfriend){
-                        createNotification();
+                        //createNotification();
                         HashMap<String, String> item = new HashMap<String, String>();
                         item.put("item1", "[속보] "+s.name+" 여자친구 생김");
                         item.put("item2", s.date);
@@ -117,7 +136,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void ViewCam(View view) {
-        createNotification();
         Intent intent = new Intent(HomeActivity.this, CamActivity.class);
         startActivity(intent);
     }
@@ -139,5 +157,56 @@ public class HomeActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel("default", "기본 채널", NotificationManager.IMPORTANCE_DEFAULT));
         }
         notificationManager.notify(1, builder.build());
+    }
+    private void AlarmDialogue(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("알람허용").setMessage("아이가 넘어졌을때 알람을 받으시겠어요?\n(허용 안할시 아이가 넘어지는 것을 실시간으로 확인하지 않을시 알 수 없음)");
+
+        builder.setPositiveButton("허용", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                FirebaseMessaging.getInstance().subscribeToTopic("falldown1").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "성공";
+                        if(!task.isSuccessful()){
+                            msg = "실패";
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(HomeActivity.this, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+                FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            String e = user.getUid();
+                            FirebaseDatabase.getInstance().getReference("alarm").child(e).setValue("1");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                Toast.makeText(getApplicationContext(), "알람이 허용되었습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

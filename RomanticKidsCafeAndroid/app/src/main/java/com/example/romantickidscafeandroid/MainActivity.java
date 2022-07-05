@@ -1,10 +1,14 @@
 package com.example.romantickidscafeandroid;
 
+import static android.content.ContentValues.TAG;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonLogIn;
     private Button buttonSignUp;
     private Context mContext;
+    String loginId,loginPwd;
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -56,7 +61,12 @@ public class MainActivity extends AppCompatActivity {
         rellay2 = (RelativeLayout) findViewById(R.id.rellay2);
         handler.postDelayed(runnable, 2000);
         firebaseAuth = FirebaseAuth.getInstance();
+
         editTextEmail = (EditText) findViewById(R.id.edittext_email);
+        editTextPassword = (EditText) findViewById(R.id.edittext_password);
+        buttonLogIn = (Button) findViewById(R.id.btn_login);
+
+
         editTextEmail.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int keyCode, KeyEvent event) {
@@ -69,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        editTextPassword = (EditText) findViewById(R.id.edittext_password);
-        buttonLogIn = (Button) findViewById(R.id.btn_login);
         editTextPassword.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -82,7 +90,46 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        //자동 로그인===================================================================================================
+        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                }
+            }
+        };
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+        loginId = sharedPreferences.getString("inputId", null);
+        loginPwd = sharedPreferences.getString("inputPwd", null);
+        if(loginId != null && loginPwd != null) {
+            loginUser(loginId,loginPwd);
+            Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
+        }
+        else {
+            buttonLogIn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
 
+                    SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+
+                    SharedPreferences.Editor autoLogin = sharedPreferences.edit();
+
+                    autoLogin.putString("inputId", editTextEmail.getText().toString());
+                    autoLogin.putString("inputPwd", editTextPassword.getText().toString());
+
+                    autoLogin.commit();
+                    Toast.makeText(getApplicationContext(), editTextEmail.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
+                    loginUser(editTextEmail.getText().toString(),editTextPassword.getText().toString());
+                }
+            });
+        }
+        //=============================================================================================================
         //로그인 정보 저장 체크박스
         CheckBox save_checkBox = (CheckBox) findViewById(R.id.save_checkbox) ;
         mContext = this;
@@ -95,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        buttonLogIn.setOnClickListener(new View.OnClickListener() {
+        /*buttonLogIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!editTextEmail.getText().toString().equals("") && !editTextPassword.getText().toString().equals("")) {
@@ -129,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                 }
             }
-        };
+        };*/
     }
     public void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)

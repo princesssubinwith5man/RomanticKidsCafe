@@ -8,6 +8,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -16,6 +17,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -167,7 +169,7 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int id)
             {
-                FirebaseMessaging.getInstance().subscribeToTopic("falldown1").addOnCompleteListener(new OnCompleteListener<Void>() {
+                FirebaseMessaging.getInstance().subscribeToTopic("falldown2").addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         String msg = "성공";
@@ -208,5 +210,20 @@ public class HomeActivity extends AppCompatActivity {
 
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    public void logout(View view) {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(intent);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.clear();
+        editor.commit();
+
+        Toast.makeText(getApplicationContext(), "로그아웃", Toast.LENGTH_SHORT).show();
+
+        finish();
     }
 }

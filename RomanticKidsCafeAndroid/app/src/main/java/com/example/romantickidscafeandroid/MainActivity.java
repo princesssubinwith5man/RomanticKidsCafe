@@ -2,17 +2,23 @@ package com.example.romantickidscafeandroid;
 
 import static android.content.ContentValues.TAG;
 
+import static java.security.AccessController.getContext;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,17 +26,27 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+import android.provider.Settings.Secure;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    RelativeLayout rellay1, rellay2;
+    RelativeLayout rellay1;
+    LinearLayout rellay2;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
     private EditText editTextEmail;
@@ -39,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
     private Button buttonSignUp;
     private Context mContext;
     String loginId,loginPwd;
+    int check = 0;
+    String androidId;
 
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -56,9 +74,37 @@ public class MainActivity extends AppCompatActivity {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             getWindow().setStatusBarColor(Color.TRANSPARENT); }
+        androidId = getDeviceId(this);
+        Log.d(TAG, "Android ID is "+ androidId);
+        FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String key = snapshot.getKey();
+                    if(key.equals(androidId)) {
+                        Log.d(TAG, "key: " + key);
+                        String alarm = snapshot.getValue(String.class);
+                        Log.d(TAG, "alarm: " + alarm);
+                        check = 1;
+                        Log.d(TAG, "check: " + check);
+                    }
+                }
+                Log.d(TAG, "check: "+ check);
+                if(check == 0){
+                    AlarmDialogue();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         rellay1 = (RelativeLayout)findViewById(R.id.rellay1);
-        rellay2 = (RelativeLayout) findViewById(R.id.rellay2);
+        rellay2 = (LinearLayout) findViewById(R.id.rellay2);
         handler.postDelayed(runnable, 2000);
         firebaseAuth = FirebaseAuth.getInstance();
 
@@ -79,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        editTextPassword.setOnKeyListener(new View.OnKeyListener() {
+        /*editTextPassword.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 //Enter key Action
@@ -89,8 +135,15 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return false;
             }
-        });
+        });*/
         //자동 로그인===================================================================================================
+        CheckBox save_checkBox = (CheckBox) findViewById(R.id.save_checkbox) ;
+        mContext = this;
+        if (save_checkBox.isChecked()) {
+            editTextEmail.setText(PreferenceManager.getString(mContext, "id"));
+            editTextPassword.setText(PreferenceManager.getString(mContext, "pw"));
+            save_checkBox.setChecked(true);
+        }
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -106,7 +159,8 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
         loginId = sharedPreferences.getString("inputId", null);
         loginPwd = sharedPreferences.getString("inputPwd", null);
-        if(loginId != null && loginPwd != null) {
+        if(loginId != "" && loginPwd != ""&&loginId != null && loginPwd != null) {
+            Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
             loginUser(loginId,loginPwd);
             Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
         }
@@ -119,25 +173,38 @@ public class MainActivity extends AppCompatActivity {
 
                     SharedPreferences.Editor autoLogin = sharedPreferences.edit();
 
-                    autoLogin.putString("inputId", editTextEmail.getText().toString());
-                    autoLogin.putString("inputPwd", editTextPassword.getText().toString());
+                    if(!editTextEmail.getText().toString().equals("") && !editTextPassword.getText().toString().equals("")) {
+                        //Log.d(TAG, "뭐가 문젠데 " +"\"" +editTextEmail.getText().toString() + "\""+" " +editTextPassword.getText().toString());
+                        autoLogin.putString("inputId", editTextEmail.getText().toString());
+                        autoLogin.putString("inputPwd", editTextPassword.getText().toString());
 
-                    autoLogin.commit();
-                    Toast.makeText(getApplicationContext(), editTextEmail.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
+                        autoLogin.commit();
+                        loginUser(editTextEmail.getText().toString(),editTextPassword.getText().toString());
+                        if (save_checkBox.isChecked()) {
+                            PreferenceManager.setString(mContext, "id", editTextEmail.getText().toString());//id 키값으로 저장
+                            PreferenceManager.setString(mContext, "pw", editTextPassword.getText().toString());//pw 키값으로 저장
+                            PreferenceManager.setBoolean(mContext, "check", save_checkBox.isChecked()); //현재 체크박스 상태 값 저장
+
+                        }
+                        else {
+                            PreferenceManager.setBoolean(mContext, "check", save_checkBox.isChecked()); //현재 체크박스 상태 값 저장
+                            PreferenceManager.clear(mContext); //로그인 정보 삭제
+                        }
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, "계정과 비밀번호를 입력하세요.", Toast.LENGTH_LONG).show();
+                        Log.d("asdfsadf", "onClick: 계정과 비밀번호를 입력하세요");
+                    }
                     Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
-                    loginUser(editTextEmail.getText().toString(),editTextPassword.getText().toString());
+
+                    //Toast.makeText(getApplicationContext(), editTextEmail.getText().toString() + "님 환영합니다.", Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
         //=============================================================================================================
         //로그인 정보 저장 체크박스
-        CheckBox save_checkBox = (CheckBox) findViewById(R.id.save_checkbox) ;
-        mContext = this;
-        if (save_checkBox.isChecked()) {
-            editTextEmail.setText(PreferenceManager.getString(mContext, "id"));
-            editTextPassword.setText(PreferenceManager.getString(mContext, "pw"));
-            save_checkBox.setChecked(true);
-        }
+
 
 
 
@@ -164,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("asdfsadf", "onClick: 계정과 비밀번호를 입력하세요");
                 }
             }
-        });
+        });*/
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -176,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                 }
             }
-        };*/
+        };
     }
     public void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -212,5 +279,115 @@ public class MainActivity extends AppCompatActivity {
         if (firebaseAuthListener != null) {
             firebaseAuth.removeAuthStateListener(firebaseAuthListener);
         }
+    }
+    public static String getDeviceId(Context context){
+        return Settings.Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
+    }
+    private void AlarmDialogue(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("알람허용").setMessage("아이가 넘어졌을때 알람을 받으시겠어요?\n(허용 안할시 아이가 넘어지는 것을 실시간으로 확인하지 않을시 알 수 없음)");
+
+        builder.setPositiveButton("허용", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                FirebaseMessaging.getInstance().subscribeToTopic("falldown7").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        String msg = "성공";
+                        if(!task.isSuccessful()){
+                            msg = "실패";
+                        }
+                        Log.d(TAG, msg);
+                        Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+                FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            //String androidId = getDeviceId(this);
+                            FirebaseDatabase.getInstance().getReference("alarm").child(androidId).setValue("1");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                Toast.makeText(getApplicationContext(), "알람이 허용되었습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("취소", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            //String androidId = getDeviceId(this);
+                            FirebaseDatabase.getInstance().getReference("alarm").child(androidId).setValue("0");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                alarmDialogue();
+                Toast.makeText(getApplicationContext(), "Cancel Click", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+    private void alarmDialogue(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("알림").setMessage("알람을 취소하였습니다.\n알람을 받고 싶으면 좌측하단에서 알람허용을 하실 수 있습니다.");
+        builder.setPositiveButton("확인", new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialog, int id)
+            {
+                Toast.makeText(getApplicationContext(), "테스트", Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    public void AlarmAccess(View view) {
+        androidId = getDeviceId(this);
+        Log.d(TAG, "Android ID is "+ androidId);
+        FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    String key = snapshot.getKey();
+                    if(key.equals(androidId)) {
+                        Log.d(TAG, "key: " + key);
+                        String alarm = snapshot.getValue(String.class);
+                        if(alarm.equals("0")){
+                            AlarmDialogue();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

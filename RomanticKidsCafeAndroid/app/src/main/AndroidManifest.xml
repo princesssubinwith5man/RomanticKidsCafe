@@ -13,6 +13,9 @@
         android:theme="@style/Theme.RomanticKidsCafeAndroid"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ListViewAdapter"
+            android:exported="true" />
+        <activity
             android:name=".CamActivity"
             android:exported="true" />
         <activity

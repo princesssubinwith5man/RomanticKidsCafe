@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity {
     List<Object> Array = new ArrayList<Object>();
     FirebaseFirestore db;
     ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String, String>>();
-
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +76,9 @@ public class HomeActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
-
+        Intent intent = getIntent();
+        url = intent.getStringExtra("url");
+        Toast.makeText(getApplicationContext(), url, Toast.LENGTH_SHORT).show();
         db = FirebaseFirestore.getInstance();
 
         FirebaseDatabase.getInstance().getReference("fall_down").addValueEventListener(new ValueEventListener() {
@@ -88,28 +90,22 @@ public class HomeActivity extends AppCompatActivity {
 
                     //}
                     FallDown s = snapshot.getValue(FallDown.class);
-                    //String ss = snapshot.child("fall_down").getValue();
                     assert s != null;
-                    Log.d(TAG, "onDataChange: "+s.name + " " + s.girlfriend);
-                    if(s.girlfriend){
-                        //createNotification();
-                        //HashMap<String, String> item = new HashMap<String, String>();
-                        //item.put("item1", "[속보] "+s.name+" 여자친구 생김");
-                        //item.put("item2", s.date);
-                        //list.add(item);
+                    if(s.fall_down){
 
-                        adapter.addItem("[속보] "+s.name+" 여자친구 생김", s.date);
+                        adapter.addItem("[속보] "+s.name+" 넘어짐", s.date);
                         listview.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
-                        //setListview();
+
                         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                             @Override
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                 Intent intent = new Intent(HomeActivity.this, CamActivity.class);
+                                intent.putExtra("url",url);
                                 startActivity(intent);
                             }
                         });
-                        FirebaseDatabase.getInstance().getReference("fall_down").child("test").child("girlfriend").setValue(false);
+                        FirebaseDatabase.getInstance().getReference("fall_down").child("test").child("fall_down").setValue(false);
                     }
                 }
             }
@@ -122,20 +118,21 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    private void setListview(){
+    /*private void setListview(){
         ListView listView =(ListView)findViewById(R.id.list);
         SimpleAdapter adapter = new SimpleAdapter(this, list, android.R.layout.simple_list_item_2,new String[]{"item1","item2"}, new int[] {android.R.id.text1, android.R.id.text2});
         listView.setAdapter(adapter);
         //MySoundPlayer.initSounds(getApplicationContext());
         //MySoundPlayer.play(MySoundPlayer.SUCCESS);
-    }
+    }*/
 
     public void ViewCam(View view) {
         Intent intent = new Intent(HomeActivity.this, CamActivity.class);
+        intent.putExtra("url",url);
         startActivity(intent);
     }
 
-    private void createNotification(){
+    /*private void createNotification(){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
 
         builder.setSmallIcon(R.mipmap.ic_launcher);
@@ -152,7 +149,7 @@ public class HomeActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(new NotificationChannel("default", "기본 채널", NotificationManager.IMPORTANCE_DEFAULT));
         }
         notificationManager.notify(1, builder.build());
-    }
+    }*/
 
 
     public void logout(View view) {

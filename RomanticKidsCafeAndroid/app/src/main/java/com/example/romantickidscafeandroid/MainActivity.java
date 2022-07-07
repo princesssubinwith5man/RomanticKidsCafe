@@ -149,36 +149,35 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                    Intent intent = new Intent(MainActivity.this, CafeListView.class);
                     startActivity(intent);
                     finish();
                 } else {
                 }
             }
         };
-        SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
-        loginId = sharedPreferences.getString("inputId", null);
-        loginPwd = sharedPreferences.getString("inputPwd", null);
+        //SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+        //loginId = sharedPreferences.getString("inputId", null);
+        //loginPwd = sharedPreferences.getString("inputPwd", null);
         if(loginId != "" && loginPwd != ""&&loginId != null && loginPwd != null) {
             Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
-            loginUser(loginId,loginPwd);
-            Log.d(TAG, "onClick: "+ loginId + " "+ loginPwd);
+            //loginUser(loginId,loginPwd);
         }
         else {
             buttonLogIn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
+                    //SharedPreferences sharedPreferences = getSharedPreferences("sharedPreferences", Activity.MODE_PRIVATE);
 
-                    SharedPreferences.Editor autoLogin = sharedPreferences.edit();
+                    //SharedPreferences.Editor autoLogin = sharedPreferences.edit();
 
                     if(!editTextEmail.getText().toString().equals("") && !editTextPassword.getText().toString().equals("")) {
                         //Log.d(TAG, "뭐가 문젠데 " +"\"" +editTextEmail.getText().toString() + "\""+" " +editTextPassword.getText().toString());
-                        autoLogin.putString("inputId", editTextEmail.getText().toString());
-                        autoLogin.putString("inputPwd", editTextPassword.getText().toString());
+                        //autoLogin.putString("inputId", editTextEmail.getText().toString());
+                        //autoLogin.putString("inputPwd", editTextPassword.getText().toString());
 
-                        autoLogin.commit();
+                        //autoLogin.commit();
                         loginUser(editTextEmail.getText().toString(),editTextPassword.getText().toString());
                         if (save_checkBox.isChecked()) {
                             PreferenceManager.setString(mContext, "id", editTextEmail.getText().toString());//id 키값으로 저장
@@ -232,18 +231,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });*/
-        firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                }
-            }
-        };
     }
     public void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
@@ -271,14 +258,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        firebaseAuth.addAuthStateListener(firebaseAuthListener);
+        //FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        //while(!currentUser.getEmail().equals(null))
+        //Log.d(TAG, "currentUser: "+currentUser.getEmail());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (firebaseAuthListener != null) {
+        //if (firebaseAuthListener != null) {
             firebaseAuth.removeAuthStateListener(firebaseAuthListener);
-        }
+        //}
     }
     public static String getDeviceId(Context context){
         return Settings.Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);

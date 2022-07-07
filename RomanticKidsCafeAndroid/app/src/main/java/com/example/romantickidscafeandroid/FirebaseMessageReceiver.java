@@ -72,7 +72,7 @@ public class FirebaseMessageReceiver
      */
     private void sendNotification(String messageBody) {
 
-        Intent intent = new Intent(this, CamActivity.class);
+        Intent intent = new Intent(this, CafeListView.class);
 
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 

@@ -31,5 +31,5 @@ class FirebaseMsg:
         
     def falldown(self):
         ref = db.reference('fall_down/test')
-        ref.update({'name': '홍이삭', 'falldown': False, 'girlfriend':True,'date':str(datetime.datetime.now())})
+        ref.update({'name': '홍이삭', 'fall_down': True, 'girlfriend':False,'date':str(datetime.datetime.now())})
         self.sendMessage('[속보] 홍이삭 여친 생김')

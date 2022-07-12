@@ -170,10 +170,10 @@
             android:layout_weight="1"
             android:layout_alignParentRight="true"
             android:background="#00000000"
-            android:text="Alarm access"
+            android:text="exit"
             android:fontFamily="sans-serif"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:onClick="AlarmAccess"/>
+            android:onClick="exit"/>
     </LinearLayout>
 </RelativeLayout>

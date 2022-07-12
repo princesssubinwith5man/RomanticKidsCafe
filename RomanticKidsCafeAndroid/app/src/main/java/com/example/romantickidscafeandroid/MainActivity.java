@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    Intent intent = new Intent(MainActivity.this, CafeListView.class);
+                    Intent intent = new Intent(MainActivity.this, MainActivity2.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         //if (firebaseAuthListener != null) {
-            firebaseAuth.removeAuthStateListener(firebaseAuthListener);
+        firebaseAuth.removeAuthStateListener(firebaseAuthListener);
         //}
     }
     public static String getDeviceId(Context context){
@@ -356,29 +356,14 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void AlarmAccess(View view) {
-        androidId = getDeviceId(this);
-        Log.d(TAG, "Android ID is "+ androidId);
-        FirebaseDatabase.getInstance().getReference("alarm").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    //FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    String key = snapshot.getKey();
-                    if(key.equals(androidId)) {
-                        Log.d(TAG, "key: " + key);
-                        String alarm = snapshot.getValue(String.class);
-                        if(alarm.equals("0")){
-                            AlarmDialogue();
-                        }
-                    }
-                }
-            }
+    public void exit(View view) {
+        moveTaskToBack(true); // 태스크를 백그라운드로 이동
+        finishAndRemoveTask(); // 액티비티 종료 + 태스크 리스트에서 지우기
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        System.exit(0);
+    }
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 }

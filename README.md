@@ -21,4 +21,5 @@
 - **Yolo**                ✔️
 - **MediaPipe**           ✔️
 - **Connect Firebase**    ✔️
-- **...**                 ❌
+- **LSTM Model**          ✔️
+- **Apply to Many People**❌

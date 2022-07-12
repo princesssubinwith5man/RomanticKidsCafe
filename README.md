@@ -22,4 +22,5 @@
 - **MediaPipe**           ✔️
 - **Connect Firebase**    ✔️
 - **LSTM Model**          ✔️
+- **Openpifpaf**          ✔️
 - **Apply to Many People**❌

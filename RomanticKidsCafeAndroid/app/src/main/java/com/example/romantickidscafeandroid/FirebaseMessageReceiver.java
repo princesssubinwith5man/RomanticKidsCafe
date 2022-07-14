@@ -139,7 +139,7 @@ public class FirebaseMessageReceiver
 
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_mmmain)
                         .setContentTitle("Romantic Kids Cafe")
                         .setContentText(messageBody)
                         .setAutoCancel(true)

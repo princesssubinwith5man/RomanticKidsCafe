@@ -23,13 +23,22 @@ class FirebaseMsg:
 
     def sendMessage(self, body):
         data_message = {
+            "url" : url,
             "body" : body
         }
-        result = self.push_service.notify_topic_subscribers(topic_name="falldown7", data_message=data_message)
+    
+        result = self.push_service.notify_topic_subscribers(topic_name=topic_name, data_message=data_message)
 
         print(result)
+
         
     def falldown(self):
-        ref = db.reference('fall_down/test')
-        ref.update({'name': '홍이삭', 'fall_down': True, 'girlfriend':False,'date':str(datetime.datetime.now())})
-        self.sendMessage('[속보] 홍이삭 여친 생김')
+        ref = db.reference('cafe')
+        for k in ref.get():
+            if ref.get()[k]['url'] == url:
+                topic_name = ref.get()[k]['topic_name']
+                cafe_name = k
+                break
+        ref1 = db.reference('fall_down/'+cafe_name)
+        ref1.update({'name': '홍이삭', 'fall_down': True, 'girlfriend':False,'date':str(datetime.datetime.now())})
+        self.sendMessage('아이가 넘어졌어요!',url,topic_name)

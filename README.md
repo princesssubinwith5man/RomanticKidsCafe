@@ -6,16 +6,21 @@
 # 진행상황
 ### Andriod
 - **Login**               ✔️
+- **Auto Login**          ✔️
+- **Logout**              ✔️
 - **Sign-Up**             ✔️
 - **Connect Firebase**    ✔️
-- **Implement ListView**  ✔️
+- **Cafe ListView**       ✔️
 - **Sound**               ✔️
-- **Alarm**               ❌
-- **Design**              ❌
-- **Connect WebCam**      ❌
-- **...**
+- **Alarm**               ✔️
+- **Design**             ?✔️?
+- **Connect WebCam**      ✔️
+- **Search Cafe**         ✔️
+- **When fall down, update listview every cafe**  ❌
 ### Machine Learning
 - **Yolo**                ✔️
 - **MediaPipe**           ✔️
 - **Connect Firebase**    ✔️
-- **...**                 ❌
+- **LSTM Model**          ✔️
+- **Openpifpaf**          ✔️
+- **Apply to Many People**❌

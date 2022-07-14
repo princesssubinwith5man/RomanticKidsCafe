@@ -1,6 +1,7 @@
 package com.example.romantickidscafeandroid;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +37,8 @@ public class ListViewAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         final int pos = i;
         final Context context = viewGroup.getContext();
-
+        ImageView iconImageView;
+        ImageView stateImageView;
         TextView Title;
         TextView Content;
 
@@ -48,10 +50,13 @@ public class ListViewAdapter extends BaseAdapter {
 
         Title = (TextView) view.findViewById(R.id.Title);
         Content = (TextView) view.findViewById(R.id.Content);
-
+        iconImageView = (ImageView) view.findViewById(R.id.iconImage);
+        stateImageView = (ImageView) view.findViewById(R.id.alarm_state);
 
         ListViewItem listViewItem = listViewItemList.get(i);
 
+        iconImageView.setImageResource(listViewItem.getIcon());
+        stateImageView.setImageResource(listViewItem.getState());
         Title.setText(listViewItem.getTitle());
         Content.setText(listViewItem.getContent());
 
@@ -59,8 +64,13 @@ public class ListViewAdapter extends BaseAdapter {
         return view;
     }
 
-    public void addItem(String Title, String Content){
+    public void addItem(String Title, String Content, int i){
         ListViewItem item = new ListViewItem();
+        item.setIcon(R.drawable.coffee);
+        if(i==1)
+            item.setState(R.drawable.alarmaccess);
+        else
+            item.setState(R.drawable.alarmdeny);
         item.setTitle(Title);
         item.setContent(Content);
 

@@ -1,5 +1,7 @@
 package com.example.romantickidscafeandroid;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -7,13 +9,15 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
+import androidx.appcompat.widget.SearchView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +45,7 @@ public class SearchFragment extends Fragment {
     ListView listview;
     static ProgressBar pb;
     String name;
+    static HashMap<String,String> AlarmHashMap = new HashMap<String,String>();
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -82,7 +87,7 @@ public class SearchFragment extends Fragment {
         pb.getIndeterminateDrawable().setColorFilter(Color.parseColor("#C57603"), android.graphics.PorterDuff.Mode.SRC_IN);
         ListViewAdapter adapter = new ListViewAdapter();
         listview = (ListView) v.findViewById(R.id.list3);
-        SearchView sv = (SearchView)v.findViewById(R.id.search_view);
+        SearchView sv = v.findViewById(R.id.search_view);
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -94,9 +99,9 @@ public class SearchFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if(!s.equals(""))
+                /*if(!s.equals(""))
                     pb.setVisibility(View.VISIBLE);
-                SearchListview(s);
+                SearchListview(s);*/
                 return false;
             }
         });
@@ -104,24 +109,47 @@ public class SearchFragment extends Fragment {
     }
     public void SearchListview(String s){
         ListViewAdapter adapter = new ListViewAdapter();
+        String DeviceID = Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        FirebaseDatabase.getInstance().getReference("real_alarm").child(DeviceID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    AlarmHashMap.put(snapshot.getKey(), snapshot.getValue().toString());
+                    //Log.d(TAG, "CafeFragment snapshot.getValue(): " + AlarmHashMap.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
         FirebaseDatabase.getInstance().getReference("cafe").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                adapter.clearItem();
                 ArrayList<String> cafeUrl = new ArrayList<String>();
                 ArrayList<String> cafeName = new ArrayList<String>();
-                adapter.clearItem();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String CafeName = snapshot.getKey();
-                    if (CafeName.contains(s)) {
-                        //Log.d(TAG, "cafe name is : "+ CafeName);
+                    if(CafeName.contains(s)) {
                         Cafe c = snapshot.getValue(Cafe.class);
                         assert c != null;
-                        //Log.d(TAG, "onDataChange: "+c.address + " " + c.url + " " + CafeName);
                         cafeUrl.add(c.url);
                         cafeName.add(CafeName);
-                        adapter.addItem(CafeName, c.address);
+                        Log.d(TAG, "CafeFragment snapshot.getValue(): " + AlarmHashMap.get(CafeName));
+                        String ahmkey = AlarmHashMap.get(CafeName);
+                    /*boolean b = (ahmkey.equals("1"));
+                    Log.d(TAG, "boolean b: "+b+" "+ahmkey);*/
+                        if (ahmkey != null) {
+                            if (ahmkey.equals("1"))
+                                adapter.addItem(CafeName, c.address, 1);
+                            else
+                                adapter.addItem(CafeName, c.address, 0);
+                        } else
+                            adapter.addItem(CafeName, c.address, 0);
                         listview.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
                         //setListview();
@@ -130,14 +158,16 @@ public class SearchFragment extends Fragment {
                             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                 Intent intent = new Intent(getActivity(), HomeActivity.class);
                                 intent.putExtra("url", cafeUrl.get(i));
-                                intent.putExtra("name",cafeName.get(i));
+                                intent.putExtra("name", cafeName.get(i));
                                 startActivity(intent);
                             }
                         });
-
                     }
+
+                    //Log.d(TAG, "cafe name is : "+ CafeName);
+                    //Log.d(TAG, "onDataChange: "+c.address + " " + c.url + " " + CafeName);
+
                 }
-                pb.setVisibility(View.INVISIBLE);
             }
 
             @Override
@@ -145,5 +175,6 @@ public class SearchFragment extends Fragment {
 
             }
         });
+        pb.setVisibility(View.INVISIBLE);
     }
 }

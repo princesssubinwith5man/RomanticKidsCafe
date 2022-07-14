@@ -1,46 +1,107 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/grad_bg">
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+
+            android:id="@+id/bar"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_gravity="bottom"
+            app:fabCradleRoundedCornerRadius="30dp"
+            app:fabCradleMargin="5dp"
+            app:fabAlignmentMode="center"
+            app:navigationIcon="@drawable/white_alpha"
+            app:backgroundTint="@color/white"
+            >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_marginRight="40dp"
+            android:text="View Cam"
+            android:textStyle="italic"
+            android:textSize="20sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="#66cdaa" />
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:tooltipText="ViewCam"
+            android:onClick="ViewCam"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:backgroundTint="#545454"
+            android:src="@drawable/camera_lens"
+            app:maxImageSize="100dp"
+            app:fabCustomSize="100dp"
+            app:layout_anchor="@id/bar"/>
+
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/round">
     <TextView
         android:id="@+id/cafename"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="35dp"
         android:text="CafeName"
+        android:textColor="@color/white"
+        android:fontFamily="sans-serif-medium"
         android:textStyle="bold"
         android:gravity="center"
         android:textSize="20sp"/>
-    <com.kyleduo.switchbutton.SwitchButton
-        android:id="@+id/sb_use_listener"
-        android:theme="@style/SwitchButtonStyle"
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:backgroundTint="@color/white"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingRight="0dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textStyle="bold"
+            android:textColor="#e0ecee"
+            android:text="알람 허용"/>
+        <com.kyleduo.switchbutton.SwitchButton
+            android:id="@+id/sb_use_listener"
+            android:theme="@style/SwitchButtonStyle"
+            android:thumb = "@drawable/thumb"
+            android:track = "@drawable/track"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:kswBackColor="@color/white"
+            app:kswTintColor="#66cdaa"
+            app:kswAnimationDuration="150"/>
+    </LinearLayout>
+    </LinearLayout>
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="VIEW CAM"
-        android:onClick="ViewCam"
-        android:backgroundTint="@color/white"/>
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="logout"
-        android:onClick="logout"
-        android:backgroundTint="@color/white"/>
-</LinearLayout>
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:divider="#00FFFFFF"
+        android:dividerHeight="4dp"/>
     </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>

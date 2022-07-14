@@ -1,6 +1,7 @@
 package com.example.romantickidscafeandroid;
 
 import static android.content.ContentValues.TAG;
+import static android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 
 import static java.security.AccessController.getContext;
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE|View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN| SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.TRANSPARENT); }
         androidId = getDeviceId(this);
         Log.d(TAG, "Android ID is "+ androidId);

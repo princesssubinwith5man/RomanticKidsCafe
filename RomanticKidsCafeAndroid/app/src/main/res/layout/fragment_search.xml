@@ -10,20 +10,40 @@
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_marginTop="30dp"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/linear1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/round">
+        <androidx.appcompat.widget.SearchView
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="35dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/et_bg"
+            app:iconifiedByDefault="false"
+            app:queryHint="Search Please"
+            app:queryBackground="@null"/>
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <SearchView
-                android:id="@+id/search_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:iconifiedByDefault="false"
-                android:imeOptions="actionDone"
-                android:queryHint="Search Please"/>
+
             <!--<Button
                 android:id="@+id/search_btn1"
                 android:layout_width="wrap_content"
@@ -39,7 +59,12 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fastScrollEnabled="true"
-            android:divider="#FFFFFF"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:dividerHeight="4dp"
+            android:divider="#00000000"/>
+    </LinearLayout>
     </LinearLayout>
     <ProgressBar
         android:id="@+id/progressbar"

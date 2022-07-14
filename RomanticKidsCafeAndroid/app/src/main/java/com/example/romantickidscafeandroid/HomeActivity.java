@@ -1,6 +1,7 @@
 package com.example.romantickidscafeandroid;
 
 import static android.content.ContentValues.TAG;
+import static android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -70,7 +72,7 @@ import java.util.Queue;
 import java.util.TimeZone;
 
 public class HomeActivity extends AppCompatActivity {
-    ListViewAdapter adapter = new ListViewAdapter();
+    FallDownListVIewAdapter adapter = new FallDownListVIewAdapter();
     List<Object> Array = new ArrayList<Object>();
     static ArrayList<FallDown> fallDownArrayList = new ArrayList<FallDown>();
     FirebaseFirestore db;
@@ -89,9 +91,10 @@ public class HomeActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             getWindow().setStatusBarColor(Color.TRANSPARENT);
         }
+
         ListView listview = (ListView)findViewById(R.id.list);
         TextView textView = (TextView)findViewById(R.id.cafename);
         Intent intent = getIntent();
@@ -203,15 +206,9 @@ public class HomeActivity extends AppCompatActivity {
                         FallDown s = snapshot.getValue(FallDown.class);
                         assert s != null;
                         if (s.fall_down) {
-                            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy년 MM월 dd일");
-                            Date now = new Date();
-                            String nowTime1 = sdf1.format(now);
-
-                            s.date = nowTime1;
 
                             fallDownArrayList.add(s);
-                            adapter.addItem("[속보] " + s.name + " 넘어짐", nowTime1);
+                            adapter.addItem("아이가 넘어졌어요.", s.date);
                             listview.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
 

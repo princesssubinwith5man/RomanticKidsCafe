@@ -1,9 +1,9 @@
 package com.example.romantickidscafeandroid;
-public class ListViewItem {
+
+public class FallDownListViewItem {
     private String Title;
     private String Content;
     private int iconDrawable;
-    private int stateDrawble;
     //final private double lat, lng;
 
     public void setTitle(String title) {
@@ -18,10 +18,6 @@ public class ListViewItem {
         iconDrawable = icon;
     }
 
-    public void setState(int icon) {
-        stateDrawble = icon;
-    }
-
     public String getTitle() {
         return this.Title;
     }
@@ -29,11 +25,8 @@ public class ListViewItem {
     public int getIcon() {
         return this.iconDrawable;
     }
-    public int getState() {return this.stateDrawble;}
 
     public String getContent() {
         return this.Content;
     }
-
-
 }

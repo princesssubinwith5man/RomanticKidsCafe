@@ -20,8 +20,25 @@ class FirebaseMsg:
             #'projectId': 'princesssuvinand6dwarf-default-rtdb',
             'databaseURL' : 'https://princesssuvinand6dwarf-default-rtdb.asia-southeast1.firebasedatabase.app/'
         })
-
-    def sendMessage(self, body):
+        
+    def date_format(self,date):
+        year = date.year
+        month = date.month
+        day = date.day
+        hour = date.hour
+        minute = date.minute
+        second = date.second
+    
+        if len(str(minute)) == 1:
+            minute = '0'+str(minute)
+        if len(str(hour)) == 1:
+            hour = '0'+str(hour)
+        if len(str(second)) == 1:
+            second = '0'+str(second)
+    
+        return f'{year}년 {month}월 {day}일 {hour}:{minute}:{second}'
+        
+    def sendMessage(self,body,url,topic_name):
         data_message = {
             "url" : url,
             "body" : body
@@ -30,15 +47,15 @@ class FirebaseMsg:
         result = self.push_service.notify_topic_subscribers(topic_name=topic_name, data_message=data_message)
 
         print(result)
-
         
-    def falldown(self):
+    def falldown(self,url):
         ref = db.reference('cafe')
         for k in ref.get():
+            #print(ref.get()[k]['url'])
             if ref.get()[k]['url'] == url:
                 topic_name = ref.get()[k]['topic_name']
                 cafe_name = k
                 break
         ref1 = db.reference('fall_down/'+cafe_name)
-        ref1.update({'name': '홍이삭', 'fall_down': True, 'girlfriend':False,'date':str(datetime.datetime.now())})
+        ref1.update({'name': '홍이삭', 'fall_down': True, 'girlfriend':False,'date':self.date_format(datetime.datetime.now())})
         self.sendMessage('아이가 넘어졌어요!',url,topic_name)

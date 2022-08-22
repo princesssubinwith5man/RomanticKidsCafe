@@ -10,6 +10,7 @@ import time
 from PIL import Image
 from pymongo import MongoClient
 from datetime import datetime
+from dotenv import load_dotenv
 
 #db에 웹캠에 비친 사람의 관절 좌표를 등록
 def input_db(db, data, human_index):
@@ -73,13 +74,22 @@ def calcul_xy(xy):
 def main():
     predictor = openpifpaf.Predictor(checkpoint='shufflenetv2k16')
     #predictions, gt_anns, image_meta = predictor.pil_image(pil_im)
-    url = "http://222.120.21.20:5000/stream?src=0" #웹캠 서버 주소
+    
+    # 초기화 
+    load_dotenv()
+    global url, db_ip, db_port, db_name, cl_name
+    url = os.getenv('CamAddr')
+    db_ip = os.getenv('dbip')
+    db_port = int(os.getenv('dbport'))
+    db_name = os.getenv('dbname')
+    cl_name = os.getenv('clname')    
     cap = cv2.VideoCapture(url)
     prev = 0
     FPS = 10
-    client = MongoClient(host='114.70.235.37', port=27017)
-    db = client['mydb']
-    db = db.xy_wj
+    
+    client = MongoClient(host=db_ip, port=db_port) # mongodb
+    db = client[db_name][cl_name]
+    
     if cap.isOpened(): 
         ret, img = cap.read()
         cur = time.time() - prev
@@ -96,7 +106,7 @@ def main():
 
             predictions, gt_anns, image_meta = predictor.pil_image(img)
 
-            if len(predictions) < 1: #사람없음
+            if len(predictions) < 1: #사람 없음
                 ret, img = cap.read()
                 cur = time.time() - prev
                 
